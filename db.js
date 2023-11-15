@@ -1,5 +1,7 @@
+const { response } = require('express');
 const { MongoClient } = require('mongodb');
-const uri = "mongodb+srv://marcin240204:<password>@cluster0.dat668z.mongodb.net/?retryWrites=true&w=majority";
+const uri = "mongodb+srv://marcin240204:Rademenes13@cluster0.dat668z.mongodb.net/?retryWrites=true&w=majority";
+
 
 
 async function connect() {
@@ -21,9 +23,29 @@ async function getAllListings(client) {
     return list;
 }
 
+
+async function get(client, criteria) {
+    const collection = await client.db('sample_airbnb').collection('listingsAndReviews');
+
+    let list = collection.find(criteria).toArray();
+    return list;
+}
+
+async function add(client, data) {
+    const collection = await client.db('sample_airbnb').collection('listingsAndReviews');
+    collection.insertOne(data, (error, response) => {
+        if(error) {
+            console.log("błąd podczas dodawania rekordu!");
+            return false;
+        } else {
+            return true;
+        }
+    });
+}
+
 function close(client) {
     client.close();
     console.log("Rozłączyłeś się z MongoDB");
 }
 
-module.exports = {connect, getAllListings, close}
+module.exports = {connect, getAllListings, close, get, add}
